@@ -2,16 +2,18 @@
 %table
   %thead
     %tr
-      %th.col-xs-6.col-md-3 Sensor ID
+      %th.col-xs-6.col-md-1 Sensor ID
       %th.col-xs-6.col-md-3 Filled At
+      %th.col-xs-6.col-md-3 Message Sent
       %th.col-xs-6.col-md-3 Cleared
       %th.col-xs-6.col-md-3 Cleared at
       %th{:colspan => "3"}
   %tbody
     - @sensors.each do |sensor|
       %tr
-        %td.col-xs-6.col-md-3= sensor.sensor_id
+        %td.col-xs-6.col-md-1= sensor.sensor_id
         %td.col-xs-6.col-md-3= sensor.created_at
+        %td.col-xs-6.col-md-3= sensor.message_sent
         %td.col-xs-6.col-md-3= sensor.cleared
         %td.col-xs-6.col-md-3= sensor.cleared_at
         / %td.col-xs-6.col-md-3= link_to 'Show', sensor

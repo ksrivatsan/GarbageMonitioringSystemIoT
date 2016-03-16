@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160314024800) do
+ActiveRecord::Schema.define(version: 20160316052535) do
 
   create_table "sensors", force: true do |t|
     t.integer  "sensor_id"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20160314024800) do
     t.datetime "cleared_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "message_sent"
   end
 
 end

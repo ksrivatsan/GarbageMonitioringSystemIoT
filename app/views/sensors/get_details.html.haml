@@ -4,6 +4,7 @@
     %tr
       %th.col-md-2 Sensor ID
       %th.col-md-2 Filled at
+      %th.col-md-2 Message Sent
       %th.col-md-2 Cleared
       %th.col-md-2 Cleared at
       %th{:colspan => "3"}
@@ -11,6 +12,7 @@
     %tr
       %td.col-md-2= @sensor.sensor_id
       %td.col-md-2= @sensor.created_at
+      %td.col-md-2= @sensor.message_sent
       %td.col-md-2= @sensor.cleared
       %td.col-md-2= @sensor.cleared_at
       %td.col-md-2.btn-info= link_to 'Clear Garbage bin', clear_sensors_path(sensor_id:@sensor.sensor_id)

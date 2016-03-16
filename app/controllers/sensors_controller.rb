@@ -1,4 +1,5 @@
 class SensorsController < ApplicationController
+  skip_before_action :verify_authenticity_token
   before_action :set_sensor, only: [:show, :edit, :update, :destroy]
 
   # GET /sensors
@@ -24,39 +25,49 @@ class SensorsController < ApplicationController
   # GET /sensors/get_details.json
   def get_details
     if(params[:add_new])
-      @sensor = Sensor.create(sensor_id: params[:sensor_id], cleared: false)
+      @sensor = Sensor.create(sensor_id: params[:sensor_id], cleared: false, message_sent: false)
       @response = @sensor.cleared ? 1 : 0
     else
       @sensor = Sensor.where(sensor_id: params[:sensor_id]).last
       if(@sensor)
         @response = @sensor.cleared ? 1 : 0
       else
-        @sensor = Sensor.new(sensor_id: params[:sensor_id], cleared: false)
+        @sensor = Sensor.new(sensor_id: params[:sensor_id], cleared: false, message_sent: false)
         @sensor.save
         @response = @sensor.cleared ? 1 : 0
       end
     end
-    if(@response == 0){
-      ssid = 'AC06943da31d54a04cb31b29d43e334d57'
+    if(@response == 0 && request.path_parameters[:format] == "json" && @sensor.message_sent == false)
+      sid = 'AC06943da31d54a04cb31b29d43e334d57'
       pass = 'e43f19e0772ad1d67ab98d167cd48302'
-      client = Twilio::REST::Client.new ssid, pass
-      message = client.messages.create from: '+14082903859', to: '+14087056411', body: 'Garbage bin is almost full. Please clear the bin and click on the url'.concat(get_details_sensors_path_link(params[:sensor_id]) + ' to reset it to empty.'
-    }
+      # client = Twilio::REST::Client.new Rails.application.secrets.twilio_account_sid, Rails.application.secrets.twilio_auth_token
+      @matter = url_for(:controller => 'sensors', :action => 'get_details',:sensor_id => @sensor.sensor_id)
+
+      @message  = "Garbage bin: #{@sensor.sensor_id} is almost full. Please clear the bin using the link below. \n"
+      @message << "#{view_context.link_to '', @matter}".html_safe
+
+      # msg = "Created job job number #{link_to get_details_sensors_path, :sensor_id => params[:sensor_id]}."
+      client = Twilio::REST::Client.new sid, pass
+      # msg = "Garbage can almost full. Please clear the bin and use the link to do the same on the website. \n" + request.host_with_port + "/get_details?sensor_id=" + params[:sensor_id]
+      message = client.messages.create from: '+14082903859', to: '+14087056411', body: @message
+      @sensor.message_sent = true
+      @sensor.save
+    end
     respond_to do |format|
       format.html
       format.json{render json: @response}
     end
   end
 
-  def set_details
-    if(params[:sensor_id])
-      @sensor = Sensor.create(sensor_id: params[:sensor_id], cleared: false)
-    end
-    respond_to do |format|
-      format.html
-      format.json{render json: @sensor.cleared}
-    end
-  end
+  # def set_details
+  #   if(params[:sensor_id])
+  #     @sensor = Sensor.create(sensor_id: params[:sensor_id], cleared: false)
+  #   end
+  #   respond_to do |format|
+  #     format.html
+  #     format.json{render json: @sensor.cleared}
+  #   end
+  # end
 
   def clear
     @sensor = Sensor.where(sensor_id:params[:sensor_id]).last
