@@ -23,12 +23,25 @@ class SensorsController < ApplicationController
 
   # GET /sensors/get_details.json
   def get_details
-    if(params[:sensor_id])
-      @sensor = Sensor.where(sensor_id: params[:sensor_id]).last
-      @response = @sensor.cleared
+    if(params[:add_new])
+      @sensor = Sensor.create(sensor_id: params[:sensor_id], cleared: false)
+      @response = @sensor.cleared ? 1 : 0
     else
-      @response = "sensor not found!"
+      @sensor = Sensor.where(sensor_id: params[:sensor_id]).last
+      if(@sensor)
+        @response = @sensor.cleared ? 1 : 0
+      else
+        @sensor = Sensor.new(sensor_id: params[:sensor_id], cleared: false)
+        @sensor.save
+        @response = @sensor.cleared ? 1 : 0
+      end
     end
+    if(@response == 0){
+      ssid = 'AC06943da31d54a04cb31b29d43e334d57'
+      pass = 'e43f19e0772ad1d67ab98d167cd48302'
+      client = Twilio::REST::Client.new ssid, pass
+      message = client.messages.create from: '+14082903859', to: '+14087056411', body: 'Garbage bin is almost full. Please clear the bin and click on the url'.concat(get_details_sensors_path_link(params[:sensor_id]) + ' to reset it to empty.'
+    }
     respond_to do |format|
       format.html
       format.json{render json: @response}
@@ -37,13 +50,21 @@ class SensorsController < ApplicationController
 
   def set_details
     if(params[:sensor_id])
-      @sensor = Sensor.new(sensor_id: params[:sensor_id], cleared: false)
-      @sensor.save
+      @sensor = Sensor.create(sensor_id: params[:sensor_id], cleared: false)
     end
     respond_to do |format|
       format.html
-      format.json
+      format.json{render json: @sensor.cleared}
     end
+  end
+
+  def clear
+    @sensor = Sensor.where(sensor_id:params[:sensor_id]).last
+    @sensor.cleared = true;
+    @sensor.cleared_at = Time.now;
+    @sensor.save
+    # @sensor_new = Sensor.create(sensor_id: params[:sensor_id], cleared: false)
+    redirect_to(@sensor)
   end
 
   # POST /sensors

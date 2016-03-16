@@ -2,9 +2,11 @@ Rails.application.routes.draw do
   resources :sensors do
     collection do
       get 'get_details'
-      post 'set_details'
+      get 'clear'
     end
   end
+  post 'twilio/voice' => 'twilio#voice'
+  post 'notifications/notify' => 'notifications#notify'
   root 'sensors#index'
 
 
