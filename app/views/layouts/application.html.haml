@@ -1,10 +1,25 @@
 !!!
 %html
-  %head
-    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
-    %title Gms
-    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
-    = javascript_include_tag 'application', 'data-turbolinks-track' => true
-    = csrf_meta_tags
-  %body
-    = yield
+	%head
+		%meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+		%title Gms
+		= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
+		= javascript_include_tag 'application', 'data-turbolinks-track' => true
+		= csrf_meta_tags
+	%body
+		.navbar.navbar-inverse
+			.container
+				.navbar-header
+					%a.navbar-brand{:href => "/sensors"} CONTROL PANEL
+					%button.navbar-toggle{"data-target" => ".navbar-collapse", "data-toggle" => "collapse", :type => "button"}
+						%span.sr-only Toggle navigation
+						%span.icon-bar
+						%span.icon-bar
+						%span.icon-bar
+				.collapse.navbar-collapse
+					%ul.nav.navbar-nav
+						- @sensor_ids.each do |sensor_id|
+							%li
+								%a.active{:href => "/sensors/get_details?sensor_id=#{sensor_id}"}= "GARBAGE CAN #{sensor_id}"
+		.container
+			= yield

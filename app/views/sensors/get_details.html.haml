@@ -1,13 +1,31 @@
-%h1 Listing sensors
-%table
+/ .container
+/   %h1 Listing sensors
+/   %table
+/     %thead
+/       %tr
+/         %th.col-md-2 Sensor ID
+/         %th.col-md-2 Filled at
+/         %th.col-md-2 Message Sent
+/         %th.col-md-2 Cleared
+/         %th.col-md-2 Cleared at
+/         %th{:colspan => "3"}
+/     %tbody
+/       %tr
+/         %td.col-md-2= @sensor.sensor_id
+/         %td.col-md-2= @sensor.created_at
+/         %td.col-md-2= @sensor.message_sent
+/         %td.col-md-2= @sensor.cleared
+/         %td.col-md-2= @sensor.cleared_at
+/   .col-md-1.btn-info= link_to 'Clear Garbage bin', clear_sensors_path(sensor_id:@sensor.sensor_id)
+%h1 CLEAR BIN REQUESTS
+%table.table.table-striped.table-bordered
   %thead
-    %tr
+    %tr.info
       %th.col-md-2 Sensor ID
-      %th.col-md-2 Filled at
-      %th.col-md-2 Message Sent
-      %th.col-md-2 Cleared
-      %th.col-md-2 Cleared at
-      %th{:colspan => "3"}
+      %th.col-md-2 FILLED AT
+      %th.col-md-2 MESSAGE SENT AT
+      %th.col-md-2 CLEARED FLAG
+      %th.col-md-2 CLEARED AT
   %tbody
     %tr
       %td.col-md-2= @sensor.sensor_id
@@ -15,4 +33,5 @@
       %td.col-md-2= @sensor.message_sent
       %td.col-md-2= @sensor.cleared
       %td.col-md-2= @sensor.cleared_at
-      %td.col-md-2.btn-info= link_to 'Clear Garbage bin', clear_sensors_path(sensor_id:@sensor.sensor_id)
+.btn.pull-right
+  %button= link_to 'Clear Garbage bin', clear_sensors_path(sensor_id:@sensor.sensor_id)
